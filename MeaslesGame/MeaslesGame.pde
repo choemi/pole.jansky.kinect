@@ -1,4 +1,12 @@
 import SimpleOpenNI.*;
+import blobDetection.*; // blobs
+import toxi.geom.*; // toxiclibs shapes and vectors
+import toxi.processing.*; // toxiclibs display
+import shiffman.box2d.*; // shiffman's jbox2d helper library
+import org.jbox2d.collision.shapes.*; // jbox2d
+import org.jbox2d.dynamics.joints.*;
+import org.jbox2d.common.*; // jbox2d
+import org.jbox2d.dynamics.*; // jbox2d
 SimpleOpenNI context;
 
 
@@ -9,15 +17,35 @@ PImage rgbImage;
 color pixelColor;
 color bgColor = color(255, 255, 255);
 color userColor = color(0, 0, 0);
+BlobDetection theBlobDetection;
+ToxiclibsSupport gfx;
+Box2DProcessing box2d;
+
 
 void setup(){
-  size(640,480, P2D);
+  size(640,480, OPENGL);
   context=new SimpleOpenNI(this);
-  context.enableRGB();
-  context.enableDepth();
-  context.enableUser();
-  userImage=createImage(640,480,RGB);
-  virus = loadShape("virus.svg");
+  if (!context.enableDepth() || !context.enableUser()) { 
+    println("Kinect not connected!"); 
+    exit();
+  } else {
+    context.setMirror(true);
+    context.enableRGB();
+    context.enableDepth();
+    context.enableUser();
+    userImage=createImage(640,480,RGB);
+    virus = loadShape("virus.svg");
+    
+    theBlobDetection = new BlobDetection(userImage.width, userImage.height);
+    theBlobDetection.setThreshold(0.3);
+    // initialize ToxiclibsSupport object
+    gfx = new ToxiclibsSupport(this);
+    // setup box2d, create world, set gravity
+    box2d = new Box2DProcessing(this);
+    box2d.createWorld();
+    box2d.setGravity(0, -40);
+    
+  }
 }
 
 void draw(){
