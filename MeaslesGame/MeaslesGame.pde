@@ -17,10 +17,20 @@ PImage rgbImage;
 color pixelColor;
 color bgColor = color(255, 255, 255);
 color userColor = color(0, 0, 0);
+
+
+
 BlobDetection theBlobDetection;
 ToxiclibsSupport gfx;
 Box2DProcessing box2d;
-
+PolygonBlob poly;
+PImage blobs;
+PImage cam = createImage(640, 480, RGB);
+ArrayList<CustomShape> polygons = new ArrayList<CustomShape>();
+int kinectWidth = 640;
+int kinectHeight = 480;
+float reScale;
+color blobColor;
 
 void setup(){
   size(640,480, OPENGL);
@@ -49,8 +59,46 @@ void setup(){
 }
 
 void draw(){
-   drawUser();
+   //drawUser();
    drawVirus();
+   
+     background(bgColor);
+  // update the SimpleOpenNI object
+  context.update();
+
+  cam = context.userImage();
+  cam.loadPixels();
+  color black = color(0,0,0);
+  // filter out grey pixels (mixed in depth image)
+  for (int i=0; i<cam.pixels.length; i++)
+  { 
+    color pix = cam.pixels[i];
+    int blue = pix & 0xff;
+    if (blue == ((pix >> 8) & 0xff) && blue == ((pix >> 16) & 0xff))
+    {
+      cam.pixels[i] = black;
+    }
+  }
+  cam.updatePixels();
+  
+  // copy the image into the smaller blob image
+  blobs.copy(cam, 0, 0, cam.width, cam.height, 0, 0, blobs.width, blobs.height);
+  // blur the blob image
+  blobs.filter(BLUR, 1);
+  // detect the blobs
+  theBlobDetection.computeBlobs(blobs.pixels);
+  // initialize a new polygon
+  poly = new PolygonBlob();
+  // create the polygon from the blobs (custom functionality, see class)
+  poly.createPolygon();
+  // create the box2d body from the polygon
+  poly.createBody();
+  // update and draw everything (see method)
+  updateAndDrawBox2D();
+  // destroy the person's body (important!)
+  poly.destroyBody();
+  // set the colors randomly every 240th frame
+  //setRandomColors(240);
 }
 
 void drawUser(){
@@ -79,4 +127,47 @@ void drawVirus(){
     
     shape(virus, 150, 50, 100, 100);
     virus.rotate(0.1);
+}
+
+void updateAndDrawBox2D() {
+  // if frameRate is sufficient, add a polygon and a circle with a random radius
+
+  
+  if (frameRate > 30) {
+    CustomShape shape = new CustomShape(kinectWidth/4, -50, 20, BodyType.DYNAMIC);
+    polygons.add(shape);
+    /*
+    CustomShape shape1 = new CustomShape(kinectWidth/2, -50, -1,BodyType.DYNAMIC) ;
+     CustomShape shape2 = new CustomShape(kinectWidth/2, -50, random(2.5, 20),BodyType.DYNAMIC);
+    polygons.add(shape1);
+    polygons.add(shape2);
+    */
+  }
+  // take one step in the box2d physics world
+  box2d.step();
+ 
+  // center and reScale from Kinect to custom dimensions
+  translate(0, (height-kinectHeight*reScale)/2);
+  scale(reScale);
+ 
+  // display the person's polygon  
+  noStroke();
+  fill(blobColor);
+  gfx.polygon2D(poly);
+ 
+  // display all the shapes (circles, polygons)
+  // go backwards to allow removal of shapes
+  for (int i=polygons.size()-1; i>=0; i--) {
+    CustomShape cs = polygons.get(i);
+    // if the shape is off-screen remove it (see class for more info)
+    
+    
+    if (cs.done()) {
+      polygons.remove(i);
+    // otherwise update (keep shape outside person) and display (circle or polygon)
+    } else {
+      cs.update();
+      cs.display();
+    }
+  }
 }
