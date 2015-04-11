@@ -73,6 +73,7 @@ class CustomShape {
       fd.restitution = 0.3;
       // create the fixture from the shape's fixture def (deflect things based on the actual circle shape)
       body.createFixture(fd);
+      
     }
   }
 

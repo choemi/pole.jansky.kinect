@@ -82,15 +82,19 @@ void setup() {
     // setup box2d, create world, set gravity
     box2d = new Box2DProcessing(this);
     box2d.createWorld();
-    box2d.setGravity(0, -40);
+    box2d.setGravity(0, 0); //falling bubbles (0, -40)
     // set random colors (background, blob)
     //setRandomColors(1);
     
     float gap = kinectWidth / 21;
+    
+    // Small bubles in the beginning
+    /*
     for (int i=0; i<20; i++)
     {
       drawString(gap * (i+1), 2, 10);
     }
+    */
   }
 }
 
