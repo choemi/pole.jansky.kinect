@@ -24,6 +24,7 @@ class CustomShape {
 
   void makeBody(float x, float y, BodyType type) 
   {
+    
     // define a dynamic body positioned at xy in box2d world coordinates,
     // create it and set the initial values for this box2d body's speed and angle
     BodyDef bd = new BodyDef();
@@ -42,6 +43,8 @@ class CustomShape {
 
     if (r == -1) 
     {
+      // NOT SURE WHAT THIS PART IS DOING??
+      
       // box2d polygon shape
       PolygonShape sd = new PolygonShape();
       // toxiclibs polygon creator (triangle, square, etc)
@@ -58,10 +61,12 @@ class CustomShape {
       sd.set(vertices, vertices.length);
       // create the fixture from the shape (deflect things based on the actual polygon shape)
       body.createFixture(sd, 1);
+      
     }
 
     else 
-    {
+    {     
+      // ALSO NOT QUITE SURE WHAT THIS PART IS DOING?? IF REMOVED BUBBLES STILL DISPLAYED BUT SLOWER...
       // box2d circle shape of radius r
       CircleShape cs = new CircleShape();
       cs.m_radius = box2d.scalarPixelsToWorld(r);
@@ -131,7 +136,11 @@ class CustomShape {
       gfx.polygon2D(toxiPoly);
     } 
     else {
-      ellipse(0, 0, r*2, r*2);
+      //ellipse(0, 0, r*2, r*2);
+      // draw SVG instead of ellipse
+      PShape svg = loadShape("virus.svg");
+      svg.scale(0.2);
+      shape(svg);
     }
 
     popMatrix();

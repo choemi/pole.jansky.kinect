@@ -98,6 +98,7 @@ void setup() {
   }
 }
 
+/*
 void drawString(float x, float size, int cards) {
   
   float gap = kinectHeight/cards;
@@ -125,6 +126,7 @@ void drawString(float x, float size, int cards) {
     last_shape = next_shape;
   }
 }
+*/
  
 void draw() {
   background(bgColor);
@@ -168,11 +170,12 @@ void draw() {
  
 void updateAndDrawBox2D() {
   // if frameRate is sufficient, add a polygon and a circle with a random radius
-
-  
-  if (frameRate > 30) {
-    CustomShape shape = new CustomShape(kinectWidth/4, -50, 20, BodyType.DYNAMIC);
-    polygons.add(shape);
+  if (frameRate > 25) { // Default frameRate 30, slower value more bubbles within short time
+    // This adds bubbles from right and left side of screen.
+    CustomShape shape1 = new CustomShape(kinectWidth-200, 150, 10, BodyType.DYNAMIC); // float x, float y, float r, BodyType type
+    CustomShape shape2 = new CustomShape(200, 150, 10, BodyType.DYNAMIC); // float x, float y, float r, BodyType type
+    polygons.add(shape1);
+    polygons.add(shape2);
     /*
     CustomShape shape1 = new CustomShape(kinectWidth/2, -50, -1,BodyType.DYNAMIC) ;
      CustomShape shape2 = new CustomShape(kinectWidth/2, -50, random(2.5, 20),BodyType.DYNAMIC);
@@ -209,7 +212,8 @@ void updateAndDrawBox2D() {
   }
 }
 
-
+/*
+// CURRENTLY NOT REQUIRED
 // sets the colors every nth frame
 void setRandomColors(int nthFrame) {
   if (frameCount % nthFrame == 0) {
@@ -233,3 +237,4 @@ void setRandomColors(int nthFrame) {
 color getRandomColor() {
   return colorPalette[int(random(1, colorPalette.length))];
 }
+*/

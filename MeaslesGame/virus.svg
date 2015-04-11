@@ -3,5 +3,13 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="200px" height="200px" viewBox="0 0 200 200" enable-background="new 0 0 200 200" xml:space="preserve">
-<circle fill="#FF0000" stroke="#000000" stroke-miterlimit="10" cx="99.941" cy="99.588" r="52.941"/>
+<circle fill="#FF0000" cx="99.941" cy="99.588" r="52.941"/>
+<circle fill="#7F0000" cx="100" cy="32.54" r="14.107"/>
+<circle fill="#7F0000" cx="100" cy="166.637" r="14.107"/>
+<circle fill="#7F0000" cx="32.893" cy="99.588" r="14.107"/>
+<circle fill="#7F0000" cx="166.99" cy="99.588" r="14.107"/>
+<circle fill="#7F0000" cx="146.657" cy="147.922" r="14.107"/>
+<circle fill="#7F0000" cx="53.657" cy="147.921" r="14.107"/>
+<circle fill="#7F0000" cx="53.657" cy="50.92" r="14.107"/>
+<circle fill="#7F0000" cx="146.656" cy="50.92" r="14.107"/>
 </svg>
