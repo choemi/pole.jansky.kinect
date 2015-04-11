@@ -82,7 +82,7 @@ void setup() {
     // setup box2d, create world, set gravity
     box2d = new Box2DProcessing(this);
     box2d.createWorld();
-    box2d.setGravity(0, 0); //falling bubbles (0, -40)
+    box2d.setGravity(0, -5); //falling bubbles (0, -40)
     // set random colors (background, blob)
     //setRandomColors(1);
     
@@ -171,11 +171,19 @@ void draw() {
 void updateAndDrawBox2D() {
   // if frameRate is sufficient, add a polygon and a circle with a random radius
   if (frameRate > 25) { // Default frameRate 30, slower value more bubbles within short time
+    
+    /*
     // This adds bubbles from right and left side of screen.
     CustomShape shape1 = new CustomShape(kinectWidth-200, 150, 10, BodyType.DYNAMIC); // float x, float y, float r, BodyType type
     CustomShape shape2 = new CustomShape(200, 150, 10, BodyType.DYNAMIC); // float x, float y, float r, BodyType type
+    */
+    
+    // This adds bubbles on random position
+    CustomShape shape1 = new CustomShape(random(50, kinectWidth-50), random(50, kinectHeight-50), 40, BodyType.DYNAMIC); // float x, float y, float r, BodyType type
+
+    
     polygons.add(shape1);
-    polygons.add(shape2);
+    //polygons.add(shape2);
     /*
     CustomShape shape1 = new CustomShape(kinectWidth/2, -50, -1,BodyType.DYNAMIC) ;
      CustomShape shape2 = new CustomShape(kinectWidth/2, -50, random(2.5, 20),BodyType.DYNAMIC);

@@ -139,7 +139,7 @@ class CustomShape {
       //ellipse(0, 0, r*2, r*2);
       // draw SVG instead of ellipse
       PShape svg = loadShape("virus.svg");
-      svg.scale(0.2);
+      svg.scale(0.2, 0.2);
       shape(svg);
     }
 
