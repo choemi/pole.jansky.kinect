@@ -1,7 +1,7 @@
 // Kinect Physics Example by Amnon Owed (15/09/12)
 
 //edited by Arindam Sen
- 
+
 // import libraries
 import processing.opengl.*; // opengl
 import SimpleOpenNI.*; // kinect
@@ -22,7 +22,7 @@ BlobDetection theBlobDetection;
 ToxiclibsSupport gfx;
 // declare custom PolygonBlob object (see class for more info)
 PolygonBlob poly;
- 
+
 // PImage to hold incoming imagery and smaller one for blob detection
 PImage blobs;
 // the kinect's dimensions to be used later on for calculations
@@ -32,7 +32,7 @@ PImage cam = createImage(640, 480, RGB);
 
 // to center and rescale from 640x480 to higher custom resolutions
 float reScale;
- 
+
 // background and blob color
 color bgColor, blobColor;
 // three color palettes (artifact from me storingmany interesting color palettes as strings in an external data file ;-)
@@ -42,21 +42,21 @@ String[] palettes = {
   "-1978728,-724510,-15131349,-13932461,-4741770,-9232823,-3195858,-8989771,-2850983,-10314372"
 };
 color[] colorPalette;
- 
+
 // the main PBox2D object in which all the physics-based stuff is happening
 Box2DProcessing box2d;
 // list to hold all the custom shapes (circles, polygons)
 ArrayList<CustomShape> polygons = new ArrayList<CustomShape>();
- 
+
 void setup() {
   println("SET UP");
-  
+
   bgColor = color(255, 255, 255);
-  
-  
-  
+
+
+
   // it's possible to customize this, for example 1920x1080
-  size(1920, 1080, OPENGL);
+  size(800, 600, OPENGL);
   context = new SimpleOpenNI(this);
   // initialize SimpleOpenNI object
   if (!context.enableDepth() || !context.enableUser()) { 
@@ -85,57 +85,59 @@ void setup() {
     box2d.setGravity(0, -5); //falling bubbles (0, -40)
     // set random colors (background, blob)
     //setRandomColors(1);
-    
+
     float gap = kinectWidth / 21;
-    
+
     // Small bubles in the beginning
     /*
     for (int i=0; i<20; i++)
-    {
-      drawString(gap * (i+1), 2, 10);
-    }
-    */
+     {
+     drawString(gap * (i+1), 2, 10);
+     }
+     */
   }
 }
 
 /*
 void drawString(float x, float size, int cards) {
-  
-  float gap = kinectHeight/cards;
-  // anchor card
-  CustomShape s1 = new CustomShape(x, -40, size, BodyType.DYNAMIC);
-  polygons.add(s1);
-  
-  CustomShape last_shape = s1;
-  CustomShape next_shape;
-  for (int i=0; i<cards; i++)
-  {
-    float y = -20 + gap * (i+1);
-    next_shape = new CustomShape(x, -20 + gap * (i+1), size, BodyType.DYNAMIC);
-    DistanceJointDef jd = new DistanceJointDef();
-
-    Vec2 c1 = last_shape.body.getWorldCenter();
-    Vec2 c2 = next_shape.body.getWorldCenter();
-  // offset the anchors so the cards hang vertically
-    c1.y = c1.y + size / 5;
-    c2.y = c2.y - size / 5;
-    jd.initialize(last_shape.body, next_shape.body, c1, c2);
-    jd.length = box2d.scalarPixelsToWorld(gap - 1);
-    box2d.createJoint(jd);
-    polygons.add(next_shape);
-    last_shape = next_shape;
-  }
-}
-*/
  
+ float gap = kinectHeight/cards;
+ // anchor card
+ CustomShape s1 = new CustomShape(x, -40, size, BodyType.DYNAMIC);
+ polygons.add(s1);
+ 
+ CustomShape last_shape = s1;
+ CustomShape next_shape;
+ for (int i=0; i<cards; i++)
+ {
+ float y = -20 + gap * (i+1);
+ next_shape = new CustomShape(x, -20 + gap * (i+1), size, BodyType.DYNAMIC);
+ DistanceJointDef jd = new DistanceJointDef();
+ Vec2 c1 = last_shape.body.getWorldCenter();
+ Vec2 c2 = next_shape.body.getWorldCenter();
+ // offset the anchors so the cards hang vertically
+ c1.y = c1.y + size / 5;
+ c2.y = c2.y - size / 5;
+ jd.initialize(last_shape.body, next_shape.body, c1, c2);
+ jd.length = box2d.scalarPixelsToWorld(gap - 1);
+ box2d.createJoint(jd);
+ polygons.add(next_shape);
+ last_shape = next_shape;
+ }
+ }
+ */
+
 void draw() {
+  frame.setTitle("" + frameRate);
+  
   background(bgColor);
   // update the SimpleOpenNI object
   context.update();
-
+  
   cam = context.userImage();
+  image(cam, 0, 0, width/4, height/4);
   cam.loadPixels();
-  color black = color(0,0,0);
+  color black = color(0, 0, 0);
   // filter out grey pixels (mixed in depth image)
   for (int i=0; i<cam.pixels.length; i++)
   { 
@@ -147,13 +149,14 @@ void draw() {
     }
   }
   cam.updatePixels();
-  
+
   // copy the image into the smaller blob image
   blobs.copy(cam, 0, 0, cam.width, cam.height, 0, 0, blobs.width, blobs.height);
   // blur the blob image
   blobs.filter(BLUR, 1);
   // detect the blobs
   theBlobDetection.computeBlobs(blobs.pixels);
+  
   // initialize a new polygon
   poly = new PolygonBlob();
   // create the polygon from the blobs (custom functionality, see class)
@@ -167,52 +170,52 @@ void draw() {
   // set the colors randomly every 240th frame
   //setRandomColors(240);
 }
- 
+
 void updateAndDrawBox2D() {
   // if frameRate is sufficient, add a polygon and a circle with a random radius
   if (frameRate > 25) { // Default frameRate 30, slower value more bubbles within short time
-    
+
     /*
     // This adds bubbles from right and left side of screen.
-    CustomShape shape1 = new CustomShape(kinectWidth-200, 150, 10, BodyType.DYNAMIC); // float x, float y, float r, BodyType type
-    CustomShape shape2 = new CustomShape(200, 150, 10, BodyType.DYNAMIC); // float x, float y, float r, BodyType type
-    */
-    
-    // This adds bubbles on random position
-    CustomShape shape1 = new CustomShape(random(50, kinectWidth-50), random(50, kinectHeight-50), 40, BodyType.DYNAMIC); // float x, float y, float r, BodyType type
+     CustomShape shape1 = new CustomShape(kinectWidth-200, 150, 10, BodyType.DYNAMIC); // float x, float y, float r, BodyType type
+     CustomShape shape2 = new CustomShape(200, 150, 10, BodyType.DYNAMIC); // float x, float y, float r, BodyType type
+     */
 
-    
+    // This adds bubbles on random position
+    CustomShape shape1 = new CustomShape(width/2, 0,  /*random(50, kinectWidth-50), random(50, kinectHeight-50), */40, BodyType.DYNAMIC); // float x, float y, float r, BodyType type
+
+
     polygons.add(shape1);
     //polygons.add(shape2);
     /*
     CustomShape shape1 = new CustomShape(kinectWidth/2, -50, -1,BodyType.DYNAMIC) ;
      CustomShape shape2 = new CustomShape(kinectWidth/2, -50, random(2.5, 20),BodyType.DYNAMIC);
-    polygons.add(shape1);
-    polygons.add(shape2);
-    */
+     polygons.add(shape1);
+     polygons.add(shape2);
+     */
   }
   // take one step in the box2d physics world
   box2d.step();
- 
+
   // center and reScale from Kinect to custom dimensions
   translate(0, (height-kinectHeight*reScale)/2);
   scale(reScale);
- 
+
   // display the person's polygon  
   noStroke();
   fill(blobColor);
   gfx.polygon2D(poly);
- 
+
   // display all the shapes (circles, polygons)
   // go backwards to allow removal of shapes
-  for (int i=polygons.size()-1; i>=0; i--) {
+  for (int i=polygons.size ()-1; i>=0; i--) {
     CustomShape cs = polygons.get(i);
     // if the shape is off-screen remove it (see class for more info)
-    
-    
+
+
     if (cs.done()) {
       polygons.remove(i);
-    // otherwise update (keep shape outside person) and display (circle or polygon)
+      // otherwise update (keep shape outside person) and display (circle or polygon)
     } else {
       cs.update();
       cs.display();
@@ -222,27 +225,27 @@ void updateAndDrawBox2D() {
 
 /*
 // CURRENTLY NOT REQUIRED
-// sets the colors every nth frame
-void setRandomColors(int nthFrame) {
-  if (frameCount % nthFrame == 0) {
-    // turn a palette into a series of strings
-    String[] paletteStrings = split(palettes[int(random(palettes.length))], ",");
-    // turn strings into colors
-    colorPalette = new color[paletteStrings.length];
-    for (int i=0; i<paletteStrings.length; i++) {
-      colorPalette[i] = int(paletteStrings[i]);
-    }
-    // set background color to first color from palette
-    bgColor = colorPalette[0];
-    // set blob color to second color from palette
-    blobColor = colorPalette[1];
-    // set all shape colors randomly
-    for (CustomShape cs: polygons) { cs.col = getRandomColor(); }
-  }
-}
+ // sets the colors every nth frame
+ void setRandomColors(int nthFrame) {
+ if (frameCount % nthFrame == 0) {
+ // turn a palette into a series of strings
+ String[] paletteStrings = split(palettes[int(random(palettes.length))], ",");
+ // turn strings into colors
+ colorPalette = new color[paletteStrings.length];
+ for (int i=0; i<paletteStrings.length; i++) {
+ colorPalette[i] = int(paletteStrings[i]);
+ }
+ // set background color to first color from palette
+ bgColor = colorPalette[0];
+ // set blob color to second color from palette
+ blobColor = colorPalette[1];
+ // set all shape colors randomly
+ for (CustomShape cs: polygons) { cs.col = getRandomColor(); }
+ }
+ }
  
-// returns a random color from the palette (excluding first aka background color)
-color getRandomColor() {
-  return colorPalette[int(random(1, colorPalette.length))];
-}
-*/
+ // returns a random color from the palette (excluding first aka background color)
+ color getRandomColor() {
+ return colorPalette[int(random(1, colorPalette.length))];
+ }
+ */
